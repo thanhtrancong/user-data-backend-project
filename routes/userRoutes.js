@@ -3,11 +3,49 @@
 const express = require('express');
 const router = express.Router(); 
 
+const userList = [
+        { 
+            id: 1, 
+            username: "Alice",
+            email: "alice@example.com"
+        }
+        , 
+        { 
+            id: 2, 
+            username: "Bob",
+            email: "bob@example.com"
+        }
+        ,
+        { 
+            id: 3, 
+            username: "Charlie",
+            email: "charlie@example.com"
+        }
+    ];
+
 // 1. ENDPOINT: Lấy Danh sách Người dùng (READ All)
 // Phương thức: GET  | Đường dẫn cuối cùng: /api/v1/users/
 router.get('/', (req, res) => {
     // GIẢ LẬP: Trả về một mảng dữ liệu người dùng ảo.
-    const userList = [ { id: 1, username: "Alice" }, { id: 2, username: "Bob" } ];
+    // const userList = [
+    //     { 
+    //         id: 1, 
+    //         username: "Alice",
+    //         email: "alice@example.com"
+    //     }
+    //     , 
+    //     { 
+    //         id: 2, 
+    //         username: "Bob",
+    //         email: "bob@example.com"
+    //     }
+    //     ,
+    //     { 
+    //         id: 3, 
+    //         username: "Charlie",
+    //         email: "charlie@example.com"
+    //     }
+    // ];
     
     // Luôn trả về 200 OK khi đọc thành công
     res.status(200).json({ 
@@ -27,6 +65,9 @@ router.post('/', (req, res) => {
         message: "Người dùng đã được tạo thành công (201 Created)",
         receivedData: userData 
     });
+    // [LOGIC ẢO]: Giả sử lưu userData vào CSDL thành công
+    // Thêm userData vào danh sách người dùng ảo userList
+    userList.push(userData);
 });
 
 // ----------------------------------------------------
