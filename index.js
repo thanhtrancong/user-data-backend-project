@@ -1,40 +1,78 @@
-// index.js
+/*
+ * ========================================
+ * FILE: INDEX.JS (MAIN SERVER FILE)
+ * MÔ TẢ: Khởi tạo Server Express, kết nối CSDL MongoDB,
+ * và định tuyến các API request.
+ * ========================================
+ */
 
-// 1. Import thư viện Express
+// --- 1. IMPORT CÁC MODULE CẦN THIẾT ---
+
 const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose'); // Import Mongoose để kiểm tra trạng thái kết nối
+const connectDB = require('./db'); // Import hàm kết nối CSDL từ file db.js
 
-// 2. Khởi tạo ứng dụng Express
-const app = express();
-const PORT = 3000; // Cổng Server thường dùng
-
-//week 3: Tạo các route riêng biệt trong file routes/userRoutes.js
-// 1. IMPORT Router
+// --- 2. IMPORT CÁC ROUTER (TỪ TUẦN 02) ---
+// Ghi chú: Đây là nơi chúng ta nhập các file định tuyến (routes) đã tách module.
 const userRoutes = require('./routes/userRoutes');
+// (Các router khác như orderRoutes, reviewRoutes... sẽ được thêm ở các tuần sau)
 
-// 2. MIDDLEWARE: BẮT BUỘC phải có để đọc Body JSON từ Request (POST, PUT, PATCH).
-app.use(express.json()); 
 
-// 3. ĐỊNH TUYẾN GỐC: Tất cả các route trong userRoutes sẽ bắt đầu bằng /api/v1/users
+// --- 3. CẤU HÌNH BIẾN MÔI TRƯỜNG (.env) ---
+// Ghi chú: Đảm bảo đã chạy 'npm install dotenv'
+// Lệnh này sẽ đọc file .env và nạp các biến (MONGO_URI, PORT) vào process.env
+dotenv.config();
+
+
+// --- 4. KHỞI TẠO ỨNG DỤNG EXPRESS ---
+const app = express();
+
+
+// --- 5. KẾT NỐI CƠ SỞ DỮ LIỆU (MONGODB ATLAS) ---
+// Ghi chú: Gọi hàm connectDB đã viết trong file db.js
+// Server sẽ cố gắng kết nối với MongoDB Atlas ngay khi khởi động.
+connectDB();
+
+
+// --- 6. CẤU HÌNH MIDDLEWARE ---
+// Ghi chú: Middleware là các hàm chạy ở giữa (middle) của Request và Response.
+
+// Middleware này BẮT BUỘC phải có để Express có thể đọc dữ liệu JSON
+// mà client (Postman/Frontend) gửi lên trong Body của request POST/PUT/PATCH.
+app.use(express.json());
+
+
+// --- 7. ĐỊNH TUYẾN (API ROUTES) ---
+// Ghi chú: Gán các router đã import vào các đường dẫn gốc (base path).
+
+// Bất kỳ request nào bắt đầu bằng '/api/v1/users' sẽ được chuyển đến 'userRoutes' xử lý.
 app.use('/api/v1/users', userRoutes); 
 
-// 3. Xây dựng Route/Endpoint đầu tiên (API chào mừng)
-// Phương thức GET, đường dẫn '/'
+// (Ví dụ cho các tuần sau khi triển khai Controller cho Orders):
+// app.use('/api/v1/orders', orderRoutes);
+// app.use('/api/v1/reviews', reviewRoutes);
+
+
+// Route cơ bản để kiểm tra Server Status và Database Connection
 app.get('/', (req, res) => {
-    // Trả về phản hồi JSON
-    res.json({ message: "Chào mừng đến với API Dữ liệu Người dùng!" });
-});
-// API GET để kiểm tra trạng thái hoạt động của Server
-app.get('/api/v1/status', (req, res) => {
-    // Trả về một phản hồi JSON chứa thông tin trạng thái
-    res.json({ 
-        service: "User Data API", 
-        version: "1.0", 
-        health: "Good",
-        timestamp: new Date().toISOString() // Thêm thời gian hiện tại
+    res.status(200).json({ 
+        message: "Welcome to User Data Backend API (Week 3)",
+        status: "Server is running",
+        
+        // Ghi chú: Kiểm tra trạng thái kết nối MongoDB
+        // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+        database_status: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected" 
     });
 });
 
-// 4. Lắng nghe các yêu cầu tại cổng đã định nghĩa
+
+// --- 8. KHỞI ĐỘNG SERVER ---
+// Lấy cổng (PORT) từ file .env, nếu không có thì mặc định là 3000.
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-    console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    // Ghi chú: Thông báo này xuất hiện trước, thông báo kết nối DB sẽ xuất hiện sau khi hàm connectDB() hoàn thành.
+    console.log("Waiting for MongoDB connection..."); 
 });
