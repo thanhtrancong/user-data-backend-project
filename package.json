@@ -8,9 +8,9 @@
     "dev": "nodemon index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Richard Trần VLSG",
   "license": "ISC",
-  "description": "",
+  "description": "Backend Project for user data management using Node.js, Express, and MongoDB. VLSG",
   "dependencies": {
     "dotenv": "^17.2.3",
     "express": "^5.1.0",

@@ -1,3 +1,9 @@
+/*
+ * ========================================
+ * FILE: DB.JS
+ * MÔ TẢ: Hàm kết nối MongoDB Atlas
+ * ========================================
+ */
 const mongoose = require('mongoose');
 require('dotenv').config(); // Ghi chú: Đọc file .env
 
