@@ -16,7 +16,8 @@ const userSchema = new mongoose.Schema({
         unique: true, 
         lowercase: true ,// Tự động chuyển thành chữ thường
         trim: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address'] // Kiểm tra định dạng email
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address'] 
+        // Kiểm tra định dạng email
     },
     passwordHash: 
     { 

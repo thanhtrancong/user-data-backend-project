@@ -2,9 +2,17 @@ const mongoose = require('mongoose');
 
 // Schema cho Mặt hàng (Embedded Schema)
 const orderItemSchema = new mongoose.Schema({
-    productName: { type: String, required: true },
-    quantity: { type: Number, required: true, min: 1 },
-    price: { type: Number, required: true, min: 0 } 
+    productName: { 
+        type: String, 
+        required: true 
+    },
+    quantity: { 
+        type: Number, 
+        required: true, 
+        min: 1 
+    },
+    price: { 
+        type: Number, required: true, min: 0 } 
 }, { _id: false }); 
 // Ghi chú: { _id: false } - Tắt ID riêng cho tài liệu nhúng để tối ưu.
 
