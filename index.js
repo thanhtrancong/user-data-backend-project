@@ -16,6 +16,7 @@ const connectDB = require('./db'); // Import hàm kết nối CSDL từ file db.
 // --- 2. IMPORT CÁC ROUTER (TỪ TUẦN 02) ---
 // Ghi chú: Đây là nơi chúng ta nhập các file định tuyến (routes) đã tách module.
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes'); // <-- THÊM DÒNG NÀY
 // (Các router khác như orderRoutes, reviewRoutes... sẽ được thêm ở các tuần sau)
 
 
@@ -45,7 +46,7 @@ app.use(express.json());
 
 // --- 7. ĐỊNH TUYẾN (API ROUTES) ---
 // Ghi chú: Gán các router đã import vào các đường dẫn gốc (base path).
-
+app.use('/api/v1/auth', authRoutes); // <-- THÊM DÒNG NÀY (CHO Register, Login)
 // Bất kỳ request nào bắt đầu bằng '/api/v1/users' sẽ được chuyển đến 'userRoutes' xử lý.
 app.use('/api/v1/users', userRoutes); 
 
