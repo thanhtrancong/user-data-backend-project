@@ -24,10 +24,15 @@ router.post('/', async (req, res) => {
     try {
         // Ghi chú: req.body chứa dữ liệu JSON từ Postman (nhờ express.json())
         // Chúng ta sẽ tạo một User mới dựa trên Schema đã định nghĩa
-        // (Lưu ý: Tuần này chúng ta chưa mã hóa passwordHash, sẽ làm ở Tuần 7)
+        // Ghi chú: req.body bây giờ chứa "username", "email", và "password" (thô)
+        // Hook 'pre-save' trong User.js sẽ tự động HASH 'password'
+
         const newUser = await User.create(req.body);
 
         // Trả về 201 Created và dữ liệu user vừa tạo
+        // Ghi chú: newUser trả về ở đây sẽ KHÔNG có trường password
+        // vì chúng ta đã đặt 'select: false' trong Schema.
+
         res.status(201).json({
             message: "Tạo User thành công!",
             data: newUser
@@ -35,6 +40,7 @@ router.post('/', async (req, res) => {
 
     } catch (err) {
         // Ghi chú: Xử lý lỗi nếu dữ liệu không hợp lệ (ví dụ: trùng email, thiếu trường required)
+        // Ghi chú: Nếu validation (minlength: 6) thất bại, lỗi sẽ rơi vào đây.
         res.status(400).json({
             message: "Tạo User thất bại",
             error: err.message 
