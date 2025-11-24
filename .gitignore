@@ -1,0 +1,8 @@
+# Dependency directory
+node_modules/
+
+# Sensitive files
+.env
+# File log và file rác hệ thống
+npm-debug.log*
+.DS_Store
