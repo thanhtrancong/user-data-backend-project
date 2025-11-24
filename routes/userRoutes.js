@@ -14,6 +14,8 @@ const router = express.Router();
 // để tương tác với Collection 'users' trong MongoDB.
 const User = require('../models/User'); 
 // (Giả sử file User.js nằm trong thư mục models)
+// BƯỚC 1: Import middleware
+const { protect, authorize } = require('../middleware/authMiddleware');
 
 // ----------------------------------------------------
 // 1. ENDPOINT: TẠO NGƯỜI DÙNG MỚI (CREATE)
@@ -50,16 +52,17 @@ const User = require('../models/User');
 
 // ----------------------------------------------------
 // 2. ENDPOINT: LẤY DANH SÁCH NGƯỜI DÙNG (READ ALL)
+// / 2. ENDPOINT: LẤY DANH SÁCH USER (Chỉ Admin) --> WEEK09
 // Phương thức: GET  | Đường dẫn cuối cùng: /api/v1/users/
 // ----------------------------------------------------
-router.get('/', async (req, res) => {
+router.get('/', protect, authorize('admin'), async (req, res) => {
     try {
         // Ghi chú: Dùng Mongoose Model. User.find({}) tìm tất cả tài liệu
         const users = await User.find();
         
         // Trả về 200 OK và toàn bộ danh sách users
         res.status(200).json({
-            message: "Lấy danh sách Users thành công",
+            message: "Lấy danh sách Users thành công (Admin only",
             count: users.length,
             data: users
         });
@@ -74,14 +77,16 @@ router.get('/', async (req, res) => {
 });
 
 // ----------------------------------------------------
-// 3. ENDPOINT: LẤY CHI TIẾT NGƯỜI DÙNG (READ ONE)
-// Phương thức: GET  | Đường dẫn cuối cùng: /api/v1/users/:id
+// 3. ENDPOINT: LẤY CHI TIẾT NGƯỜI DÙNG (MY PROFILE)
+// Phương thức: GET  | Đường dẫn cuối cùng: /api/v1/users/me
 // ----------------------------------------------------
-router.get('/:id', async (req, res) => {
+router.get('/me', protect, async (req, res) => {
     try {
         // Ghi chú: Lấy ID từ URL (req.params.id)
-        const userId = req.params.id;
+        const userId = req.user.id;
         const user = await User.findById(userId);
+    // Ghi chú: Middleware 'protect' đã tìm user và gán vào req.user
+    // Chúng ta chỉ cần trả về req.user
 
         if (!user) {
             // Ghi chú: Nếu không tìm thấy user, trả về 404
@@ -90,8 +95,8 @@ router.get('/:id', async (req, res) => {
         
         // Trả về 200 OK và dữ liệu user tìm thấy
         res.status(200).json({
-            message: "Tìm thấy User",
-            data: user
+            message: "Lấy thông tin cá nhân thành công",
+            data: req.user
         });
 
     } catch (err) {
@@ -101,42 +106,45 @@ router.get('/:id', async (req, res) => {
         });
     }
 });
-
 // ----------------------------------------------------
-// 4. ENDPOINT: CẬP NHẬT NGƯỜI DÙNG (UPDATE)
-// Phương thức: PUT/PATCH | Đường dẫn cuối cùng: /api/v1/users/:id
+// 4. ENDPOINT: LẤY CHI TIẾT USER (Chỉ Admin)
+// Phương thức: GET  | Đường dẫn: /api/v1/users/:id
 // ----------------------------------------------------
-router.put('/:id', async (req, res) => {
+router.get('/:id', protect, authorize('admin'), async (req, res) => {
     try {
-        const userId = req.params.id;
-        const updateData = req.body;
-
-        // Ghi chú: Tìm và cập nhật
-        // { new: true } để trả về tài liệu *sau* khi đã cập nhật
-        const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: `Không tìm thấy User với ID: ${userId}` });
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: `Không tìm thấy User` });
         }
-        
-        res.status(200).json({
-            message: `Cập nhật User ID ${userId} thành công`,
-            data: updatedUser
-        });
-
+        res.status(200).json({ message: "Tìm thấy User", data: user });
     } catch (err) {
-        res.status(400).json({
-            message: "Cập nhật thất bại",
-            error: err.message
-        });
+        res.status(500).json({ message: "Lỗi Server", error: err.message });
     }
 });
 
 // ----------------------------------------------------
-// 5. ENDPOINT: XÓA NGƯỜI DÙNG (DELETE)
+// 5. ENDPOINT: CẬP NHẬT USER (Chỉ Admin)
+// Phương thức: PUT | Đường dẫn: /api/v1/users/:id
+// ----------------------------------------------------
+router.put('/:id', protect, authorize('admin'), async (req, res) => {
+    try {
+        // (Logic PUT giữ nguyên...)
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!updatedUser) {
+            return res.status(404).json({ message: `Không tìm thấy User` });
+        }
+        res.status(200).json({ message: `Cập nhật User thành công`, data: updatedUser });
+    } catch (err) {
+        res.status(400).json({ message: "Cập nhật thất bại", error: err.message });
+    }
+});
+
+
+// ----------------------------------------------------
+// 6. ENDPOINT: XÓA NGƯỜI DÙNG (DELETE)
 // Phương thức: DELETE | Đường dẫn cuối cùng: /api/v1/users/:id
 // ----------------------------------------------------
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, authorize('admin'), async (req, res) => {
     try {
         const userId = req.params.id;
         const deletedUser = await User.findByIdAndDelete(userId);
