@@ -41,6 +41,12 @@ PORT=3000
 JWT_SECRET=your_jwt_secret_key
 ```
 
+**Important Security Notes:**
+- Generate a strong, random JWT_SECRET (minimum 32 characters recommended)
+- Never commit your `.env` file to version control
+- For production, use environment-specific connection strings with proper authentication
+- Keep your MongoDB credentials secure and rotate them regularly
+
 ## Usage
 
 ### Development Mode
