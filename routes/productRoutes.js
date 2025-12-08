@@ -79,7 +79,8 @@ router.get('/', async (req, res) => {
         });
 
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        // res.status(500).json({ success: false, error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -97,7 +98,8 @@ router.get('/:id', async (req, res) => {
 
         res.status(200).json({ success: true, data: product });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        // res.status(500).json({ success: false, error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -115,7 +117,8 @@ router.post('/', protect, authorize('admin'), async (req, res) => {
             data: newProduct
         });
     } catch (err) {
-        res.status(400).json({ success: false, error: err.message });
+        // res.status(400).json({ success: false, error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -140,7 +143,8 @@ router.put('/:id', protect, authorize('admin'), async (req, res) => {
             data: product
         });
     } catch (err) {
-        res.status(400).json({ success: false, error: err.message });
+        // res.status(400).json({ success: false, error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 

@@ -118,7 +118,8 @@ router.get('/:id', protect, authorize('admin'), async (req, res) => {
         }
         res.status(200).json({ message: "Tìm thấy User", data: user });
     } catch (err) {
-        res.status(500).json({ message: "Lỗi Server", error: err.message });
+        // res.status(500).json({ message: "Lỗi Server", error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -135,7 +136,8 @@ router.put('/:id', protect, authorize('admin'), async (req, res) => {
         }
         res.status(200).json({ message: `Cập nhật User thành công`, data: updatedUser });
     } catch (err) {
-        res.status(400).json({ message: "Cập nhật thất bại", error: err.message });
+        // res.status(400).json({ message: "Cập nhật thất bại", error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -157,10 +159,11 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
         res.status(204).send();
 
     } catch (err) {
-        res.status(500).json({
-            message: "Lỗi Server",
-            error: err.message
-        });
+        // res.status(500).json({
+        //     message: "Lỗi Server",
+        //     error: err.message
+        // });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 // 7. CẬP NHẬT HỒ SƠ CÁ NHÂN (User tự sửa)
@@ -185,7 +188,8 @@ router.put('/me', protect, async (req, res) => {
             data: updatedUser
         });
     } catch (err) {
-        res.status(400).json({ message: "Cập nhật thất bại", error: err.message });
+        // res.status(400).json({ message: "Cập nhật thất bại", error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -198,7 +202,8 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
             data: users
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        // res.status(500).json({ error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -216,7 +221,8 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
 
         res.status(200).json({ message: "Đã xóa User thành công" });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        // res.status(500).json({ error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 

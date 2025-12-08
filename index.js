@@ -28,6 +28,13 @@ const orderRoutes = require('./routes/orderRoutes');
 // Lệnh này sẽ đọc file .env và nạp các biến (MONGO_URI, PORT) vào process.env
 dotenv.config();
 
+const errorHandler = require('./middleware/errorMiddleware');
+
+
+
+
+
+
 
 // --- 4. KHỞI TẠO ỨNG DỤNG EXPRESS ---
 const app = express();
@@ -78,6 +85,11 @@ app.get('/', (req, res) => {
 });
 // (Ví dụ cho các tuần sau khi triển khai Controller cho Orders):
 app.use('/api/v1/orders', orderRoutes);
+
+
+// Ghi chú: Middleware xử lý lỗi (error handling middleware) phải được đặt cuối cùng
+// 👇 Đặt Middleware lỗi ở cuối cùng
+app.use(errorHandler);
 
 // --- 8. KHỞI ĐỘNG SERVER ---
 // Lấy cổng (PORT) từ file .env, nếu không có thì mặc định là 3000.

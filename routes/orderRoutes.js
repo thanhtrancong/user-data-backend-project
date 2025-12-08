@@ -21,7 +21,7 @@ router.post('/', protect, async (req, res) => {
 
         res.status(201).json({ message: "Đặt hàng thành công", data: newOrder });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -37,7 +37,7 @@ router.get('/my-orders', protect, async (req, res) => {
 
         res.status(200).json({ count: orders.length, data: orders });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -49,7 +49,7 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
             .sort('-createdAt');
         res.status(200).json({ count: orders.length, data: orders });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 

@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
             });
         }
     } catch (err) {
-        res.status(400).json({ message: "Tạo User thất bại", error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
@@ -96,7 +96,7 @@ router.post('/login', async (req, res) => {
             token: generateToken(user._id)
         });
     } catch (err) {
-        res.status(500).json({ message: "Lỗi Server", error: err.message });
+        next(err); // Chuyền lỗi xuống middleware errorHandler
     }
 });
 
