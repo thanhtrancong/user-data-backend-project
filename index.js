@@ -20,6 +20,8 @@ const authRoutes = require('./routes/authRoutes'); // <-- THÊM DÒNG NÀY
 // (Các router khác như orderRoutes, reviewRoutes... sẽ được thêm ở các tuần sau)
 // 👇 1. Import router sản phẩm (Bạn có thể require trực tiếp ở dưới hoặc import ở đây)
 const productRoutes = require('./routes/productRoutes');
+// (Ví dụ cho các tuần sau khi triển khai Controller cho Orders):
+const orderRoutes = require('./routes/orderRoutes');
 
 // --- 3. CẤU HÌNH BIẾN MÔI TRƯỜNG (.env) ---
 // Ghi chú: Đảm bảo đã chạy 'npm install dotenv'
@@ -72,7 +74,8 @@ app.get('/', (req, res) => {
         database_status: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected" 
     });
 });
-
+// (Ví dụ cho các tuần sau khi triển khai Controller cho Orders):
+app.use('/api/v1/orders', orderRoutes);
 
 // --- 8. KHỞI ĐỘNG SERVER ---
 // Lấy cổng (PORT) từ file .env, nếu không có thì mặc định là 3000.
