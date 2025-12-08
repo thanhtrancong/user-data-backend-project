@@ -31,7 +31,9 @@ dotenv.config();
 
 // --- 4. KHỞI TẠO ỨNG DỤNG EXPRESS ---
 const app = express();
-
+// 👇 THÊM DÒNG NÀY ĐỂ BẬT CHẾ ĐỘ PARSE NÂNG CAO 👇
+app.set('query parser', 'extended'); 
+// 👆 ------------------------------------------ 👆
 
 // --- 5. KẾT NỐI CƠ SỞ DỮ LIỆU (MONGODB ATLAS) ---
 // Ghi chú: Gọi hàm connectDB đã viết trong file db.js

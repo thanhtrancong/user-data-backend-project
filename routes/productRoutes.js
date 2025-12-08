@@ -31,7 +31,8 @@ router.get('/', async (req, res) => {
         let queryStr = JSON.stringify(queryObj);
         // Dùng Regex để thêm dấu '$' vào trước các toán tử (vd: gte -> $gte)
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-        
+        // 👇 THÊM DÒNG NÀY ĐỂ KIỂM TRA 👇
+
         // 4. Khởi tạo câu lệnh tìm kiếm (Chưa chạy ngay)
         let query = Product.find(JSON.parse(queryStr));
 
@@ -64,6 +65,7 @@ router.get('/', async (req, res) => {
 
         // Áp dụng skip và limit
         query = query.skip(skip).limit(limit);
+        console.log("Query gửi cho Mongo:", JSON.parse(queryStr));
 
         // --- E. THỰC THI QUERY ---
         const products = await query;
