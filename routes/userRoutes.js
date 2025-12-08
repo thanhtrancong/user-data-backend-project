@@ -163,6 +163,61 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
         });
     }
 });
+// 7. CẬP NHẬT HỒ SƠ CÁ NHÂN (User tự sửa)
+// PUT /api/v1/users/me
+router.put('/me', protect, async (req, res) => {
+    try {
+        // Lọc dữ liệu đầu vào: Chỉ cho phép sửa name, phone, address...
+        // KHÔNG cho phép sửa: password, role, email (tùy nghiệp vụ)
+        const { profile } = req.body; 
 
+        // Tìm user theo ID (lấy từ Token qua req.user._id)
+        // { new: true } để trả về data mới sau khi update
+        // runValidators: true để đảm bảo dữ liệu mới vẫn đúng chuẩn Schema
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            { profile: profile }, 
+            { new: true, runValidators: true }
+        ).select('-password'); // Không trả về password
+
+        res.status(200).json({
+            message: "Cập nhật hồ sơ thành công",
+            data: updatedUser
+        });
+    } catch (err) {
+        res.status(400).json({ message: "Cập nhật thất bại", error: err.message });
+    }
+});
+
+// 8. LẤY DANH SÁCH USER (Admin only)
+router.get('/', protect, authorize('admin'), async (req, res) => {
+    try {
+        const users = await User.find().select('-password');
+        res.status(200).json({
+            count: users.length,
+            data: users
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 9. XÓA USER (Admin only - Quyền được quên/Xử lý vi phạm)
+router.delete('/:id', protect, authorize('admin'), async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        
+        if (!user) {
+            return res.status(404).json({ message: "Không tìm thấy User" });
+        }
+
+        // Thực hiện xóa
+        await User.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({ message: "Đã xóa User thành công" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 module.exports = router;

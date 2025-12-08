@@ -18,7 +18,8 @@ const connectDB = require('./db'); // Import hàm kết nối CSDL từ file db.
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes'); // <-- THÊM DÒNG NÀY
 // (Các router khác như orderRoutes, reviewRoutes... sẽ được thêm ở các tuần sau)
-
+// 👇 1. Import router sản phẩm (Bạn có thể require trực tiếp ở dưới hoặc import ở đây)
+const productRoutes = require('./routes/productRoutes');
 
 // --- 3. CẤU HÌNH BIẾN MÔI TRƯỜNG (.env) ---
 // Ghi chú: Đảm bảo đã chạy 'npm install dotenv'
@@ -49,6 +50,11 @@ app.use(express.json());
 app.use('/api/v1/auth', authRoutes); // <-- THÊM DÒNG NÀY (CHO Register, Login)
 // Bất kỳ request nào bắt đầu bằng '/api/v1/users' sẽ được chuyển đến 'userRoutes' xử lý.
 app.use('/api/v1/users', userRoutes); 
+
+// 👇 2. THÊM DÒNG NÀY ĐỂ KÍCH HOẠT API SẢN PHẨM
+// Bất kỳ request nào bắt đầu bằng '/api/v1/products' sẽ được chuyển sang file productRoutes 
+// xử lý
+app.use('/api/v1/products', productRoutes);
 
 // (Ví dụ cho các tuần sau khi triển khai Controller cho Orders):
 // app.use('/api/v1/orders', orderRoutes);
