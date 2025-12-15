@@ -243,7 +243,8 @@ router.post('/upload-avatar', protect, upload.single('avatar'), async (req, res,
         // 2. Lưu URL ảnh vào thông tin User trong DB
         // (Giả sử trong Model User bạn đã thêm trường 'avatarUrl')
         const user = await User.findById(req.user._id);
-        user.profile.avatar = result.secure_url; // Lưu link ảnh
+        user.profile.avatarUrl = result.secure_url; // Lưu link ảnh
+        
         await user.save({ validateBeforeSave: false });
 
         res.status(200).json({
