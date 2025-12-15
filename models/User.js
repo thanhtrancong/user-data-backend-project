@@ -84,6 +84,12 @@ const userSchema = new mongoose.Schema({
         ref: 'Wishlist' 
     },
 
+    // Avatar URL
+    avatarUrl: {
+        type: String,
+        default: '',
+        trim: true
+    }
     
 }, { timestamps: true });
 // BƯỚC 3: Thêm Mongoose Hook 'pre-save'
