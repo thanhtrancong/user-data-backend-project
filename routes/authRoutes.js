@@ -173,6 +173,9 @@ router.post('/forgot-password', async (req, res, next) => {
         } catch (err) {
             // Ghi chú: Nếu gửi mail LỖI thì XÓA token trong DB đi
             // để user có thể thử lại từ đầu
+            // 👇👇👇 THÊM DÒNG NÀY ĐỂ XEM LỖI Ở TERMINAL 👇👇👇
+        console.log("CHI TIẾT LỖI GỬI MAIL:", err); 
+        // 👆👆👆 ------------------------------------- 👆👆👆
             user.resetPasswordToken = undefined;
             user.resetPasswordExpire = undefined;
             await user.save({ validateBeforeSave: false });

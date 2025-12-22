@@ -9,7 +9,7 @@ const sendEmail = async (options) => {
     port: 2525,
     auth: {
       user: "d436ef15ef05f9", // Copy từ Mailtrap
-      pass: "****7e91"  // Copy từ Mailtrap
+      pass: "363dd94eb87e91"  // Copy từ Mailtrap
     },
   });
 
