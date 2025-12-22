@@ -1,8 +1,18 @@
 const mongoose = require('mongoose');
 // BƯỚC 1: Import bcryptjs
 const bcrypt = require('bcryptjs');
-
+const crypto = require('crypto'); // Import thư viện có sẵn của Node.js 
+// để tạo chuỗi ngẫu nhiên và hash token reset password
 const userSchema = new mongoose.Schema({
+        // ... các trường cũ (username, email, password, role...)
+    
+    // 👇 THÊM 2 TRƯỜNG NÀY trong bài gưit mail, forgetpassword
+    resetPasswordToken: {
+        type: String,
+        select: false // 👈 Thêm để ẩn token khỏi query
+    },
+    resetPasswordExpire: Date,
+
     // (Giữ nguyên username, email, profile, role, orders, wishlist, cart...)
     username:
     {
@@ -118,4 +128,21 @@ userSchema.pre('save', async function (next) {
         next(error); // Chuyển lỗi cho Mongoose
     }
 });
+// 👇 THÊM PHƯƠNG THỨC TẠO TOKEN RESET
+userSchema.methods.getResetPasswordToken = function () {
+    // 1. Tạo chuỗi ngẫu nhiên (20 byte)
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // 2. Hash token và lưu vào Database (để bảo mật, không lưu token gốc)
+    this.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    // 3. Token hết hạn sau 10 phút
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+    return resetToken; // Trả về token gốc (chưa hash) để gửi qua email
+};
+
 module.exports = mongoose.model('User', userSchema);
