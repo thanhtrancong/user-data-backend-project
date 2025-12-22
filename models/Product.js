@@ -18,6 +18,12 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Price is required'], 
         min: [0, 'Price must be a positive number'] 
     },
+    // Avatar URL
+        imageUrl: {
+            type: String,
+            default: '',
+            trim: true
+        },
     stockQuantity: { 
         type: Number, 
         required: [true, 'Stock quantity is required'], 
